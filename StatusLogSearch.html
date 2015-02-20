@@ -1,0 +1,73 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>AOJ submission log</title>
+
+<script language="JavaScript"><!--
+   onkey = function(code,ob){
+      if(13 === code){
+         if(ob.name=="userid")document.form1.elements[1].focus();
+         else if(ob.name=="limit")document.form1.elements[2].focus();
+      }
+   };
+   print = function(){
+      var user=document.forms.form1.userid.value;
+      var limit=document.forms.form1.limit.value;
+
+      var src = new XMLHttpRequest();
+      src.open("GET","http://judge.u-aizu.ac.jp/onlinejudge/webservice/status_log?user_id="+user+"&limit="+limit,false);
+      src.send(null);
+      var s=["problem_id","submission_date_str","status","language","cputime","memory","code_size","run_id"];
+      var ss=["problem","submission_date","status","language","cputime(s)","memory(KB)","code_size(B)","run_id"];
+      var root = src.responseXML.documentElement;
+      var nodes = root.getElementsByTagName('status');
+      var elm=document.getElementById('target');
+      if(root.childNodes[0].nodeValue.replace(/[\r\n]/g,"")=="error"){
+         alert("error");
+         return;
+      }
+
+      var str="";
+      str+="<table border=5 style =sliod>";
+      str+="<tr>";
+      for(var j=0;j<s.length;j++){
+         str+="<td>"+ss[j]+"</td>";
+      }
+      str+="</tr>";
+      for(var i=0;i<root.children.length;i++){
+         var node=root.children[i];
+         str+="<tr>";
+         for(var j=0;j<s.length;j++){
+            var t=node.getElementsByTagName(s[j])[0].childNodes[0].nodeValue;
+            t = t.replace(/[\n\r]/g,"");
+            if(s[j]=="problem_id"){
+               t='<a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id='+t+'">'+t+'</a>';
+            }else if(s[j]=="cputime"){
+               while(t.length<4)t="0"+t;
+               t=t.substring(0,2)+"."+t.substring(2,4);
+            }else if(s[j]=="run_id"){ 
+               t='<a href="http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid='+t+'#1">'+t+'</a>';
+            }
+            str+="<td>"+t+"</td>";
+         }
+         str+="</tr>";
+      }
+      str+="</table>";
+      elm.innerHTML=str;
+   };
+
+// --></script>
+
+</head>
+<body >
+<form name="form1">
+userID <input type="text" name="userid" onkeypress="onkey(event.keyCode,this)">
+
+データ数(<=100)<input type="text" text="10" name="limit"  onkeypress="onkey(event.keyCode,this)">
+<input type="button" name="search" value="search" onclick="print()" />
+
+</form>
+<p id="target"></p>
+
+</body>
+</html>
