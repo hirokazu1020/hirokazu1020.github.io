@@ -1,7 +1,6 @@
-﻿<html>
-<head>
+﻿<html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>AOJ submission log</title>
+<title>AOJsubmission監視ﾂｰﾙ</title>
 
 <script language="JavaScript"><!--
    onkey = function(code,ob){
@@ -20,12 +19,13 @@
       var s=["problem_id","submission_date_str","status","language","cputime","memory","code_size","run_id"];
       var ss=["problem","submission_date","status","language","cputime(s)","memory(KB)","code_size(B)","run_id"];
       var root = src.responseXML.documentElement;
-      var nodes = root.getElementsByTagName('status');
       var elm=document.getElementById('target');
-      if(root.childNodes[0].nodeValue.replace(/[\r\n]/g,"")=="error"){
-         alert("error");
+      
+      if(root.childNodes[0].nodeValue.replace(/[\n\r]/g,"")=="error"){
+         alert(root.childNodes[0].nodeValue);
          return;
       }
+      var nodes = root.getElementsByTagName('status');
 
       var str="";
       str+="<table border=5 style =sliod>";
@@ -55,19 +55,32 @@
       str+="</table>";
       elm.innerHTML=str;
    };
+   window.onload = function(){
+      var url = window.location.search;
+      if(url=="")return;
+      hash  = url.slice(1).split('&');    
+      sz = hash.length;
+      for (var i = 0; i < sz; i++) {
+         array = hash[i].split('=');
+         if(i==0)document.form1.userid.value=array[1];
+         else if(i==1)document.form1.limit.value=array[1];
+      }
+      print();
+   }
 
 // --></script>
 
 </head>
-<body >
+<body>
 <form name="form1">
-userID <input type="text" name="userid" onkeypress="onkey(event.keyCode,this)">
+userID <input name="userid" onkeypress="onkey(event.keyCode,this)" type="text">
 
-データ数(<=100)<input type="text" text="10" name="limit"  onkeypress="onkey(event.keyCode,this)">
-<input type="button" name="search" value="search" onclick="print()" />
+データ数<input value="100" name="limit" onkeypress="onkey(event.keyCode,this)" type="text">
+<input name="search" value="search" onclick="print()" type="button">
 
 </form>
 <p id="target"></p>
 
-</body>
-</html>
+
+
+</body></html>
